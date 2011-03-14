@@ -2,14 +2,13 @@ class UsersController < ApplicationController
     
   before_filter :authenticate, :only => [:edit, :update]
   before_filter :correct_user, :only => [:edit, :update]
-	rescue_from ActiveRecord::RecordNotFound, :with => 	:deny_access    
+rescue_from ActiveRecord::RecordNotFound, :with => :deny_access
 
   protect_from_forgery
   include SessionsHelper
-  include UsersHelper
 
   # GET /users
-  # GET /users.xml - ok
+  # GET /users.xml
   def index
     @users = User.all
     @users = User.paginate :page => params[:page], :per_page => 	3
@@ -32,22 +31,19 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     respond_to do |format|
-     if @user.save
-	   sendmail(@user.email, @user.name, @user.id)
-# logger.debug "@user.id: #{@user.id}"
-        sign_in @user
+      if @user.save
+	sendmail(@user.email, @user.name, @user.id)
+  	sign_in @user
         format.html { 
-        flash[:success] = "Please check your mail to activate your account"
+        flash[:success] = "Please check your mail to activate your account."
         redirect_to @user}
         format.xml  { render :xml => @user, :status => :created, :location => @user }
       else
-	   @title = "Sign up"
+	@title = "Sign up"
         format.html { render :action => "new" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
-
     end
-
   end
 
   def edit
@@ -62,7 +58,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy
+def destroy
     @user = User.find(params[:id])
     @user.destroy
 
@@ -72,11 +68,15 @@ class UsersController < ApplicationController
     end
   end
 
-
   def authenticate
     deny_access unless signed_in?
   end
-  
+
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to(root_path) unless current_user?(@user)
+  end
+
   def activateuser 
     @user = User.find(params[:id])
     if @user.update_attribute(:status, true)
@@ -87,6 +87,7 @@ class UsersController < ApplicationController
     redirect_to @user
   end
 
+# a
 
 end
 
