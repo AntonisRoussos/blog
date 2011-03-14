@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   include UsersHelper
 
   # GET /users
-  # GET /users.xml
+  # GET /users.xml - ok
   def index
     @users = User.all
     @users = User.paginate :page => params[:page], :per_page => 	3
