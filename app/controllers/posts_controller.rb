@@ -1,11 +1,26 @@
 class PostsController < ApplicationController
+include SessionsHelper
 
-before_filter :authenticate, :except => [:index, :show]
-
+#today before_filter :authenticate, :except => [:index, :show]
+before_filter :correct_user, :only => [:edit, :update]
   # GET /posts
   # GET /posts.xml
   def index
-    @posts = Post.all
+     
+	i=0
+	@postname = {}
+	@post = {}
+	@user = {}
+     for post in Post.find(:all, :include => [ :user ])   
+	   i += 1	
+   	   @postname[i] = post.user.name
+	   @post[i] = post
+	   @user [i] = User.find(@post[i].user_id)
+     end
+    @post_keys = @post.keys.paginate :page => params[:page], :per_page => 	4
+
+    @postname_keys = @postname.keys.paginate :page => params[:page], :per_page => 	4
+
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,6 +32,7 @@ before_filter :authenticate, :except => [:index, :show]
   # GET /posts/1.xml
   def show
     @post = Post.find(params[:id])
+    @user = User.find(@post.user_id)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -28,6 +44,8 @@ before_filter :authenticate, :except => [:index, :show]
   # GET /posts/new.xml
   def new
     @post = Post.new
+    @user = current_user 
+    @post.user_id = @user.id
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,6 +55,8 @@ before_filter :authenticate, :except => [:index, :show]
 
   # GET /posts/1/edit
   def edit
+
+    @user = current_user 
     @post = Post.find(params[:id])
   end
 
@@ -44,6 +64,8 @@ before_filter :authenticate, :except => [:index, :show]
   # POST /posts.xml
   def create
     @post = Post.new(params[:post])
+    @user = current_user 
+    @post.user_id = @user.id
 
     respond_to do |format|
       if @post.save

@@ -2,7 +2,6 @@ class UsersController < ApplicationController
     
   before_filter :authenticate, :only => [:edit, :update]
   before_filter :correct_user, :only => [:edit, :update]
-	rescue_from ActiveRecord::RecordNotFound, :with => 	:deny_access    
 
   protect_from_forgery
   include SessionsHelper
@@ -32,12 +31,11 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
 
     respond_to do |format|
+	sendmail(@user.email, @user.name)
      if @user.save
-	   sendmail(@user.email, @user.name, @user.id)
-# logger.debug "@user.id: #{@user.id}"
         sign_in @user
         format.html { 
-        flash[:success] = "Please check your mail to activate your account"
+        flash[:success] = "Please check your mailbox to 	
         redirect_to @user}
         format.xml  { render :xml => @user, :status => 		  	   :created, :location => @user }
       else
@@ -62,17 +60,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(users_url) }
-      format.xml  { head :ok }
-    end
-  end
-
-
   def authenticate
     deny_access unless signed_in?
   end
@@ -86,7 +73,6 @@ class UsersController < ApplicationController
     end
     redirect_to @user
   end
-
 
 end
 

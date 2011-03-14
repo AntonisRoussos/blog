@@ -1,12 +1,19 @@
 Blog::Application.routes.draw do
 
 
-  resources :users
+  resources :users do
+    resources :posts
+
+  end
+
+  # match 'user/activateuser/:id' => 'users#activateuser'
+  match 'users/activateuser/:id' => 'users#activateuser'
+
   get "users/show"
+
 
   resources :posts do
     resources :comments
-     
   end
 
   resources :sessions, :only => [:new, :create, :destroy]
