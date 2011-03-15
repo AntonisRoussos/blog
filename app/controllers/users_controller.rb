@@ -50,7 +50,7 @@ rescue_from ActiveRecord::RecordNotFound, :with => :deny_access
     @user = User.find(params[:id])
     @title = "Edit user"
     if @user.update_attributes(params[:user])
-      flash[:success] = "Profile updated."
+      flash[:success] = "Profile updated.  "
       redirect_to @user
     else
       @title = "Edit user"
