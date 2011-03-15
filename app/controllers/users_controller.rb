@@ -6,7 +6,7 @@ rescue_from ActiveRecord::RecordNotFound, :with => :deny_access
 
   protect_from_forgery
   include SessionsHelper
-
+  include UsersHelper 
   # GET /users
   # GET /users.xml
   def index
