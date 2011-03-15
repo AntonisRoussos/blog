@@ -32,16 +32,16 @@ rescue_from ActiveRecord::RecordNotFound, :with => :deny_access
 
     respond_to do |format|
       if @user.save
-		sendmail(@user.email, @user.name, @user.id)
-  	   sign_in @user
+	sendmail(@user.email, @user.name, @user.id)
+  	sign_in @user
         format.html { 
         flash[:success] = "Please check your mail to activate your account."
         redirect_to @user}
-        format.xml  { render :xml => @user, :status => 		  	   :created, :location => @user }
+        format.xml  { render :xml => @user, :status => :created, :location => @user }
       else
-	   @title = "Sign up"
+	@title = "Sign up"
         format.html { render :action => "new" }
-        format.xml  { render :xml => @user.errors, :status => 	  :unprocessable_entity }
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
     end
   end
